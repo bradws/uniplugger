@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+      "module": "commonjs",
+      "esModuleInterop": true,
+      "target": "es6",
+      "moduleResolution": "node",	/* How different files and imports will work together */
+      "rootDir": "./src",
+      "outDir": "./dist",
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "strictNullChecks": true,
+      "noImplicitAny": true,
+      "declaration": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "src/testing"],
+    "lib": ["es2015"]
+}

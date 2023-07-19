@@ -1,0 +1,25 @@
+{
+  "name": "uniplugger",
+  "version": "0.0.3",
+  "description": "Simple, fast, no-frills plugin system for Node.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build:dev": "clear && rm -rf dist && tsc -p tsconfig.dev.json",
+    "build:test": "clear && rm -rf dist && tsc -p tsconfig.test.json",
+    "start:test": "clear && rm -rf dist && tsc -p tsconfig.test.json && vitest run",
+    "build:prod": "clear && rm -rf dist && tsc -p tsconfig.prod.json",
+    "document": "clear && tsc && typedoc --entryPointStrategy expand ./src"
+  },
+  "author": "Brad Smith - Hazel Software Solutions",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "typedoc": "^0.24.8",
+    "typescript": "^5.1.6",
+    "vitest": "^0.33.0"
+  }
+}
