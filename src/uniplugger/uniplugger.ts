@@ -53,9 +53,9 @@ export class Uniplugger<T> {
             const filename2 = path.join( this.folder, filename);
 
             let theModule = await import(filename2);
-            let theClass = theModule.default;
-            let thePlugin = new theClass();
-
+            
+            let thePlugin = new theModule.default;
+            
             this.plugins.push(thePlugin);
         }
         

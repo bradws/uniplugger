@@ -13,4 +13,23 @@ describe.concurrent('Able to construct the uniplugger class correctly', async ()
         expect(uniplugger).toBeInstanceOf(Uniplugger);
     });
 
+    /*
+    test('should only be able to call discover() once', async () => {
+    });
+
+    test('should be able to be constructed with a user-supplied folder', async () => {
+    });
+
+    test('should be able to be constructed with a user-supplied folder', async () => {
+    });
+
+    test('should be able to be constructed with a user-supplied folder', async () => {
+    });
+
+    test('should be able to be constructed with a user-supplied folder', async () => {
+    });
+
+    test('should be able to be constructed with a user-supplied folder', async () => {
+    });
+    */
 });
