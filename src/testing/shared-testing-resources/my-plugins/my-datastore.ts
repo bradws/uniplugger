@@ -1,8 +1,8 @@
 import { IDatastore } from '../iDatastore';
+import { TestConstants } from '../test-constants';
 
 export default class MyDatastore implements IDatastore {
     
-    name: string = 'This is MyDatastore';
+    public name: string = TestConstants.PluginName1;
     
 }
- 
