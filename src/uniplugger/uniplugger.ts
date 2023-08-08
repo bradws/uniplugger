@@ -5,20 +5,24 @@ export class Uniplugger<T> {
     #temporaryFolderPath: string;
 
     #folderPath: string;
+    /** The absolute folder path */
     public get folderPath() {
         return this.#folderPath;
     }
     
     #fileNames: Array<string>;
+    /** The array of the filenames of the plugins */
     public get fileNames() {
         return this.#fileNames;
     }
 
     #plugins: Array<T>;
+    /** The array of the plugins */
     public get plugins() {
         return this.#plugins;
     }
 
+    /** A boolean value used to make sure the user only calls discover() once during the lifetime of Uniplugger */
     #alreadyBeenDiscovered: boolean;
 
     /**
@@ -37,7 +41,10 @@ export class Uniplugger<T> {
         // Restrict user to 'discover()' the plugins only once
         this.#alreadyBeenDiscovered = false;
     }
-    
+ 
+    /**
+     * Discovers all the plugins from the folder path specified during construction of Uniplugger
+     */
     public async discover(): Promise<void> {
 
         // Restrict user to 'discover()' the plugins only once
@@ -50,7 +57,7 @@ export class Uniplugger<T> {
         if( this.#isAbsoluteFolderPath(this.#temporaryFolderPath))
             this.#folderPath = this.#temporaryFolderPath;
         else
-            this.#folderPath = path.join( __dirname, this.#temporaryFolderPath);
+            this.#folderPath = path.join( process.cwd(), this.#temporaryFolderPath);
 
         // Make sure the folder actually exists
         if( !fs.existsSync(this.#folderPath) ) {
@@ -77,11 +84,19 @@ export class Uniplugger<T> {
         }
     }
 
+    /**
+     * Determines of a folder path is absolute or relative
+     */
     #isAbsoluteFolderPath(folderPath: string): boolean {
         //TODO: 
         return false;
     }
 
+    /**
+     * Gets all the javascript filenames
+     * 
+     * @returns An array of the absolute folder path and filenames
+     */
     #getJsFilesfileNames(folderName: string): Array<string> {
 
         // Reads the content of the folder, both files and subfolders, and returns their relative path:

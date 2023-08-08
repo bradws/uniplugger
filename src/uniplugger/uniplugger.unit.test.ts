@@ -6,7 +6,8 @@ import { TestConstants } from '../testing/shared-testing-resources/test-constant
 
 describe.concurrent('Tests for Uniplugger', async () => { 
 
-    const validFolderPath = '../../dist/testing/shared-testing-resources/my-plugins';
+    // A valid relative folder containing 3 plugins
+    const validFolderPath: string = './dist/testing/shared-testing-resources/my-plugins';
 
     test('should have all properties initialised', async () => {
 
@@ -29,7 +30,7 @@ describe.concurrent('Tests for Uniplugger', async () => {
 
     test('should not allow a file name that exists', async () => {
 
-        const validFilename = 'uniplugger.ts';
+        const validFilename = './src/index.ts';
         const uniPlugger = new Uniplugger<IDatastore>(validFilename);
 
         await expect( async () => {
@@ -48,9 +49,6 @@ describe.concurrent('Tests for Uniplugger', async () => {
     });
 
     test('should be able to use 3 plugins from a folder', async () => {
-
-        // A folder containing 3 plugins
-        //const userSuppliedGlob: string = './dist/testing/shared-testing-resources/my-plugins/*.js';
 
         const uniplugger = new Uniplugger<IDatastore>( validFolderPath );
         await uniplugger.discover();
