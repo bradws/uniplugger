@@ -1,17 +1,58 @@
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, beforeAll } from 'vitest';
 
-import { Uniplugger } from '../../uniplugger';
-import { IDatastore } from '../shared-testing-resources/iDatastore';
-import { TestConstants } from '../shared-testing-resources/test-constants';
+import { Uniplugger } from './uniplugger';
+import { IDatastore } from '../testing/shared-testing-resources/iDatastore';
+import { TestConstants } from '../testing/shared-testing-resources/test-constants';
 
 describe.concurrent('Tests for Uniplugger', async () => { 
+
+    const validFolderPath = '../../dist/testing/shared-testing-resources/my-plugins';
+
+    test('should have all properties initialised', async () => {
+
+        const uniPlugger = new Uniplugger<IDatastore>(validFolderPath);
+
+        expect(uniPlugger.fileNames.length).toEqual(0);
+        expect(uniPlugger.folderPath).toEqual('');
+        expect(uniPlugger.plugins.length).toEqual(0);
+    });
+
+    test("should not allow a folderPath that doesn't exist", async () => {
+
+        const nonExistantFolderPath = './some/folder/that/doesnt/exist';
+        const uniPlugger = new Uniplugger<IDatastore>(nonExistantFolderPath);
+
+        await expect( async () => {
+            await uniPlugger.discover();
+        }).rejects.toThrowError(/doesn't exist/);
+    });
+
+    test('should not allow a file name that exists', async () => {
+
+        const validFilename = 'uniplugger.ts';
+        const uniPlugger = new Uniplugger<IDatastore>(validFilename);
+
+        await expect( async () => {
+            await uniPlugger.discover();
+        }).rejects.toThrowError(/does not appear to be a folder/);
+    });
+
+    test("should not allow a file name that doesn't exist", async () => {
+
+        const inValidFilename = 'someinvalidfilename.js';
+        const uniPlugger = new Uniplugger<IDatastore>(inValidFilename);
+
+        await expect( async () => {
+            await uniPlugger.discover();
+        }).rejects.toThrowError(/doesn't exist/);
+    });
 
     test('should be able to use 3 plugins from a folder', async () => {
 
         // A folder containing 3 plugins
-        const userSuppliedGlob: string = './dist/testing/shared-testing-resources/my-plugins/*.js';
+        //const userSuppliedGlob: string = './dist/testing/shared-testing-resources/my-plugins/*.js';
 
-        const uniplugger = new Uniplugger<IDatastore>( userSuppliedGlob );
+        const uniplugger = new Uniplugger<IDatastore>( validFolderPath );
         await uniplugger.discover();
 
         // Make sure there are 3 plugins discovered
@@ -31,10 +72,9 @@ describe.concurrent('Tests for Uniplugger', async () => {
         expect(uniplugger.plugins[0].name).toEqual(TestConstants.PluginName1);
         expect(uniplugger.plugins[1].name).toEqual(TestConstants.PluginName2);
         expect(uniplugger.plugins[2].name).toEqual(TestConstants.PluginName3);
-
     });
 
-    test('should be able to use 3 plugins from a folder, and 1 plugin from a second folder', async () => {
+    test.skip('should be able to use 3 plugins from a folder, and 1 plugin from a second folder', async () => {
 
         // A folder containing 3 plugins
         const userSuppliedGlob1: string = './dist/testing/shared-testing-resources/my-plugins/*.js';
@@ -65,7 +105,7 @@ describe.concurrent('Tests for Uniplugger', async () => {
 
     });
 
-    test('should only be able to instantiate Uniplugger with either a glob string pattern or array of glob string patterns', async () => {
+    test.skip('should only be able to instantiate Uniplugger with either a string or array of string folder paths', async () => {
 
         // A folder containing 3 plugins
         const userSuppliedGlob1: string = './dist/testing/shared-testing-resources/my-plugins/*.js';

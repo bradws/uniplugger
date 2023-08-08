@@ -1,1 +1,1 @@
-export * from './uniplugger';
+export { Uniplugger } from './uniplugger/uniplugger';

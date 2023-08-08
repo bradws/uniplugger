@@ -1,34 +1,38 @@
-import { glob } from 'glob';
+import fs from 'fs';
+import path from 'path';
 export class Uniplugger<T> {
 
-    #globString: any;
+    #temporaryFolderPath: string;
 
+    #folderPath: string;
+    public get folderPath() {
+        return this.#folderPath;
+    }
+    
     #fileNames: Array<string>;
     public get fileNames() {
         return this.#fileNames;
     }
 
-    public plugins: Array<T>;
+    #plugins: Array<T>;
+    public get plugins() {
+        return this.#plugins;
+    }
 
     #alreadyBeenDiscovered: boolean;
 
     /**
      * The constructor of Uniplugger.
      *
-     * @param glob The string or array of strings containing a glob pattern e.g. './my-plugins/*.js', or ['./my-plugins/*.js', './my-other-plugins/*.js']
+     * @param folderPath The string containing the folder path where the plugins reside e.g. './my-plugins/', or './my-plugins'
      */
-    public constructor(globString: any) {
+    public constructor(folderPath: string) {
 
-        // Make sure its a string
-        if(this.#isString(globString) || this.#isArrayOfStrings(globString)) {
-            this.#globString = globString;
-        }
-        else {
-            throw new Error(`You can provide either a string containing a glob pattern, or an array of strings containing a glob pattern`);
-        }
-
-        // Initialise the plugins array ready to be populated when user calls 'discover()'
-        this.plugins = new Array<T>();
+        // Init all properties
+        this.#temporaryFolderPath = folderPath;
+        this.#folderPath = ''; 
+        this.#fileNames = new Array<string>();
+        this.#plugins = new Array<T>();
         
         // Restrict user to 'discover()' the plugins only once
         this.#alreadyBeenDiscovered = false;
@@ -42,9 +46,26 @@ export class Uniplugger<T> {
         }   
         this.#alreadyBeenDiscovered = true;
 
-        // Get the filename(s) of the plugins from the user-supplied globString pattern
-        this.#fileNames = await glob(this.#globString);
+        // Make sure the user-supplied folder is an 'absolute' folder path
+        if( this.#isAbsoluteFolderPath(this.#temporaryFolderPath))
+            this.#folderPath = this.#temporaryFolderPath;
+        else
+            this.#folderPath = path.join( __dirname, this.#temporaryFolderPath);
 
+        // Make sure the folder actually exists
+        if( !fs.existsSync(this.#folderPath) ) {
+            throw new Error(`The folder ${this.#folderPath} doesn't exist.`);
+        }
+
+        // Make sure it's actually a folder (and not a file)
+        let statsObj = fs.statSync(this.#folderPath);
+        if( !statsObj.isDirectory() ) {
+            throw new Error(`${this.#folderPath} does not appear to be a folder.`);
+        }
+
+        // Get all the Javascript files 
+        this.#fileNames =  this.#getJsFilesfileNames(this.folderPath);
+        
         // Import() them into the 'plugins' array ready for use by the user       
         for( let fileName of this.fileNames) {
             
@@ -56,18 +77,23 @@ export class Uniplugger<T> {
         }
     }
 
-    #isString(variable: any): variable is string {
-        return typeof variable === 'string';
+    #isAbsoluteFolderPath(folderPath: string): boolean {
+        //TODO: 
+        return false;
     }
 
-    #isArrayOfStrings(variable: any): variable is Array<string> {
+    #getJsFilesfileNames(folderName: string): Array<string> {
 
-        // Make sure the variable is an array of some-sort
-        if( !Array.isArray(variable) )
-            return false;
+        // Reads the content of the folder, both files and subfolders, and returns their relative path:
+        let jsFileFileNames = fs.readdirSync(folderName).map(fileName => {
+            return path.join( folderName, fileName); // Join the folder name and path to the filename
+        })
+        // Only return the '.js' files
+        .filter( (filename) => {
+            return filename.endsWith('.js');
+        });
 
-        // Make sure all the array's elements are strings
-        return variable.every( (element) => typeof element === 'string');
+        return jsFileFileNames;
     }
-
+    
 }
