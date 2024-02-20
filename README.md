@@ -14,15 +14,15 @@
 
 At a minimum, there are generally 3 parts to a plugin arcitecture:
 
-1. **The main application.** This is your main application that will use the plugins. The plugins will be discovered and loaded at run time when specified.
+1. **The main application.** This is your main application that will use the plugin. The plugins will be discovered and loaded at run time when specified.
 2. **The plugin.** This is the piece of functionality that is abstracted out of the application for use.
-3. **The contract.** Your application needs to know what your plugin is offering, and your plugin needs to agree to provide the specifies functionality.
+3. **The contract.** Your application needs to know what your plugin is offering, and your plugin needs to agree to provide the specific functionality.
 
 > Take a look at the [uniplugger-example](https://github.com/bradws/uniplugger-example) project to see a simple example in action
 
 Similar to other plugin implementations, you'll typically do the following:
 
-1. Define the contract between your application and your plugin. This will likely be a Typescript interface.
+1. Define the contract between your application and your plugin. This is usually an interface of some-sort (e.g. a Typescript interface).
 2. Decide upon the name of a folder where to put your plugin.
 3. Define the plugin class by implementing the interface. Export the class with the `default` keyword.
 4. Build/transpile your plugin and put it into your folder. The built plugin will typically be a Javascript file.
@@ -49,7 +49,7 @@ import { IDatalayer } from './iDatalayer';
 
 export default class MySqlDatalayer implements IDatalayer {
     public name: string = 'MySql';
-    public getEmployeeDetails(iemployeeId: string): string[] {
+    public getEmployeeDetails(employeeId: string): string[] {
         let employeeData: Array<string> = new Array<string>();
 
         // Write MySql-specific code to getting the data from a MySql database
@@ -61,7 +61,7 @@ export default class MySqlDatalayer implements IDatalayer {
 }
 ```
 
-Let's define a second plugin. This one gets the data directly from disk.
+Let's define a second plugin. This one gets the details of employees directly from disk.
 
 ```typescript
 // disk-datalayer.ts (The 2nd plugin)
@@ -69,10 +69,10 @@ import { IDatalayer } from './iDatalayer';
 
 export default class DiskDatalayer implements IDatalayer {
     public name: string = 'Disk';
-    public getEmployeeDetails(iemployeeId: string): string[] {
+    public getEmployeeDetails(employeeId: string): string[] {
         let employeeData: Array<string> = new Array<string>();
 
-        // Write code to get the data from a local folder
+        // Write code to get the data from a file on disk
         // ...
         // employeeData = ???
 
@@ -99,7 +99,7 @@ async function main() {
     // Discover the plugins. Note it returns a Promise, so you'll have to await it.
     await uniplugger.discover();
 
-    // You're done: The plugins are ready for use. 
+    // You're done! The plugins are ready for use. 
     console.log(`Number of plugins discovered = ${uniplugger.plugins.length}`);    
     
     console.log(`uniplugger.plugins[0].name = ${uniplugger.plugins[0].name}`);
@@ -117,7 +117,7 @@ main();
 
 * All the plugins are discovered and loaded once, and once only. Would be nice to be able to 're-discover' any new plugins that have appeared without restarting the application.
 * It would be great if you could filter and load only the plugins you want.
-* The plugins are flat - your plugins can't have other plugins
+* The plugins are flat - your plugins can't have other nested plugins
 
 # Thoughts for future versions
 
